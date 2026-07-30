@@ -1,0 +1,313 @@
+BOOTCAMP DE JAVASCRIPT — DÍA 3
+slice(), splice(), COPIAR Y MODIFICAR
+
+1. DOS INTENCIONES DISTINTAS
+
+Antes de elegir un método, pregunta:
+
+¿Quiero obtener una parte sin alterar el original?
+    original ---- slice() ----> nuevo array
+       |                         copia elegida
+       +---- permanece igual
+
+¿Quiero editar el array existente?
+    original ---- splice() ----> original modificado
+                         \
+                          +----> array con lo eliminado
+
+Copiar conserva el estado original y crea otro array. Modificar cambia el contenido
+del array sobre el que se trabaja. Ninguna opción es siempre mejor: depende del
+problema y de quién necesita conservar el estado anterior.
+
+Analogía:
+- slice() es fotocopiar ciertas páginas de un cuaderno. El cuaderno no pierde hojas.
+- splice() es abrir el cuaderno, arrancar o insertar páginas. El cuaderno cambia.
+
+2. ¿QUÉ HACE slice()?
+
+Sintaxis conceptual:
+
+array.slice(inicio, fin)
+
+Devuelve un ARRAY NUEVO que contiene elementos desde inicio, incluido, hasta fin,
+excluido. No modifica el array original.
+
+const colores = ["rojo", "verde", "azul", "negro"];
+const seleccion = colores.slice(1, 3);
+
+Índices:          0         1         2         3
+              +--------+---------+--------+---------+
+colores ----> | "rojo" | "verde" | "azul" | "negro" |
+              +--------+---------+--------+---------+
+                           [ inicio ===== fin )
+
+seleccion ---> ["verde", "azul"]
+colores  ----> continúa con sus cuatro elementos
+
+El rango es semiabierto:
+
+inicio se incluye: [
+fin no se incluye: )
+
+[1, 3) significa índices 1 y 2. Esta decisión permite calcular la cantidad copiada:
+fin - inicio = 3 - 1 = 2.
+
+3. ¿QUÉ DEVUELVE slice()?
+
+Siempre devuelve un array nuevo, incluso si:
+- selecciona un solo elemento;
+- no selecciona ninguno;
+- se copia el array completo.
+
+const copiaCompleta = datos.slice();
+const uno = datos.slice(2, 3);
+const ninguno = datos.slice(2, 2);
+
+Visualmente:
+
+datos --------> [A][B][C]
+copiaCompleta -> [A][B][C]   otra estructura exterior
+
+Los dos arrays no son el mismo contenedor. Sin embargo, slice() realiza una copia
+superficial. Si los elementos son objetos o arrays, las referencias interiores se
+comparten:
+
+original ----> [ objeto X ][ objeto Y ]
+copia    ----> [ objeto X ][ objeto Y ]
+                    ^           ^
+              mismos objetos interiores
+
+Por eso “array nuevo” no significa “clon profundo de todo su contenido”.
+
+4. ¿POR QUÉ slice() NO MODIFICA EL ARRAY?
+
+Porque su contrato consiste en leer un rango y construir un resultado separado.
+Conceptualmente:
+
+1. Normaliza los límites.
+2. Crea un array de resultado.
+3. Recorre las posiciones seleccionadas.
+4. Copia cada valor o referencia al resultado.
+5. Devuelve el resultado.
+
+No elimina ni mueve posiciones del original. Los motores de JavaScript pueden
+optimizar estos pasos; el diagrama explica su comportamiento, no una implementación
+exacta del motor.
+
+Complejidad aproximada: O(k), donde k es la cantidad de elementos copiados.
+
+5. PARÁMETROS Y CASOS LÍMITE DE slice()
+
+- Sin parámetros: copia desde 0 hasta length.
+- Solo inicio: copia desde inicio hasta el final.
+- Fin mayor que length: se limita al final real.
+- Inicio igual a fin: devuelve [].
+- Índices negativos: se cuentan desde el final.
+
+Ejemplo conceptual con length 5:
+
+ índice normal:     0    1    2    3    4
+ valores:          [A]  [B]  [C]  [D]  [E]
+ índice negativo:  -5   -4   -3   -2   -1
+
+slice(-2) selecciona los dos últimos elementos. Un índice negativo no invierte el
+array: solo calcula una posición desde el final.
+
+Preguntas para pensar:
+- ¿Por qué slice(1, 1) produce un array vacío?
+- ¿Qué ventaja tiene que el límite final sea excluyente?
+- ¿Una copia superficial protege los objetos interiores?
+
+6. ¿QUÉ HACE splice()?
+
+splice() modifica el array original a partir de una posición. Puede:
+- eliminar;
+- insertar;
+- reemplazar, combinando eliminación e inserción.
+
+Sintaxis conceptual:
+
+array.splice(inicio, cantidadAEliminar, elemento1, elemento2, ...)
+
+Ejemplo de eliminación:
+
+const letras = ["A", "B", "C", "D"];
+const eliminadas = letras.splice(1, 2);
+
+Antes:       [A][B][C][D]
+inicio:          ^
+elimina:         [B][C]
+Después:     [A][D]
+Devuelve:       [B][C]
+
+Hay dos resultados que observar:
+1. letras fue modificado.
+2. eliminadas es un array nuevo con los valores retirados.
+
+7. ¿CÓMO MODIFICA splice() EL ARRAY?
+
+Conceptualmente:
+
+1. Localiza inicio.
+2. Guarda en otro array los elementos que serán eliminados.
+3. Retira la cantidad indicada.
+4. Inserta los nuevos elementos, si existen.
+5. Reacomoda los elementos posteriores.
+6. Actualiza length.
+7. Devuelve el array de eliminados.
+
+Los detalles internos pueden variar entre motores, pero los efectos observables son
+los mismos.
+
+Eliminar:
+    tareas.splice(2, 1)
+
+Insertar sin eliminar:
+    tareas.splice(2, 0, "nueva")
+
+Reemplazar:
+    tareas.splice(2, 1, "corregida")
+
+Comparación:
+
+operación     cantidad eliminada     elementos insertados
+eliminar              > 0                    ninguno
+insertar                0                    uno o más
+reemplazar             > 0                   uno o más
+
+8. ¿QUÉ DEVUELVE splice()?
+
+Devuelve un array con los elementos eliminados, no el array original y no su nueva
+longitud.
+
+- Si elimina dos valores, devuelve un array de dos valores.
+- Si elimina uno, devuelve un array de un valor.
+- Si no elimina ninguno, devuelve [].
+
+Esta regla también se cumple al insertar:
+
+const retirados = lista.splice(1, 0, "X");
+
+retirados es [], porque insertar no retiró nada; lista sí fue modificada.
+
+9. ¿CÓMO CAMBIA LOS ÍNDICES?
+
+Eliminar hace que los elementos posteriores se desplacen a la izquierda:
+
+Antes:       0:A   1:B   2:C   3:D
+eliminar B
+Después:     0:A   1:C   2:D
+
+Insertar hace que se desplacen a la derecha:
+
+Antes:       0:A   1:B   2:C
+insertar X en 1
+Después:     0:A   1:X   2:B   3:C
+
+Reemplazar la misma cantidad que se inserta suele conservar los índices posteriores.
+Si las cantidades difieren, también cambia la longitud y se desplazan posiciones.
+
+Complejidad aproximada: O(n) en general, porque puede reacomodar elementos. El costo
+real depende de la posición y de las cantidades.
+
+10. slice() FRENTE A splice()
+
+Característica       slice()                         splice()
+Propósito            obtener una copia de un rango   editar el array existente
+Modifica original    no                              sí
+Devuelve              array copiado                   array de eliminados
+Segundo parámetro    índice final excluido           cantidad a eliminar
+Puede insertar       no                              sí
+Puede reemplazar     no                              sí
+
+El parecido de los nombres es accidentalmente engañoso. No elijas por memoria;
+elige según la intención:
+
+¿Debe conservarse el original?
+    sí  ---> slice()
+    no  ---> ¿hay que eliminar, insertar o reemplazar?
+                 sí ---> splice()
+
+11. MUTABILIDAD E INMUTABILIDAD
+
+Un método mutable cambia el objeto original. `push`, `pop`, `shift`, `unshift` y
+`splice` son mutables.
+
+Un método inmutable, en este contexto, produce el resultado sin modificar el array
+original. `slice` se usa de forma inmutable.
+
+const no impide mutar el contenido:
+
+const lista = ["A", "B"];
+lista.push("C");       // la variable sigue apuntando al mismo array
+
+const impide reasignar `lista`, pero no congela el array.
+
+Referencia:
+
+lista ──────> [A][B]
+                 |
+              push("C")
+                 |
+lista ──────> [A][B][C]  mismo array, contenido diferente
+
+12. ¿POR QUÉ REACT UTILIZA TANTO LA INMUTABILIDAD?
+
+Una interfaz representa un estado. Cuando ese estado cambia, React necesita decidir
+qué partes deben actualizarse. Crear una nueva referencia hace visible el cambio:
+
+estado anterior ──> [A][B]
+estado nuevo    ──> [A][B][C]
+                      arrays distintos
+
+Si se muta el mismo array:
+
+estado ──> [A][B] ──mutación──> [A][B][C]
+           misma referencia
+
+Las referencias nuevas facilitan comparar estado anterior y nuevo, razonar sobre el
+historial, depurar y evitar efectos inesperados entre componentes. La inmutabilidad
+no significa que nada pueda cambiar; significa representar el siguiente estado con
+una estructura nueva en vez de alterar silenciosamente la anterior.
+
+`slice()` ayuda a copiar partes, pero por sí solo no resuelve todas las
+transformaciones ni crea copias profundas. Más adelante se estudiarán otras
+herramientas. Por ahora, lo importante es comprender la intención.
+
+13. ERRORES COMUNES
+
+- Escribir `slice` cuando se quería mutar con `splice`, o al revés.
+- Interpretar el segundo argumento de ambos métodos de la misma forma.
+- Esperar que `slice()` cambie el original.
+- Esperar que `splice()` devuelva el array ya modificado.
+- Olvidar que el fin de `slice()` se excluye.
+- Pensar que insertar con `splice()` devuelve lo insertado.
+- Confundir copia superficial con copia profunda.
+- Ejecutar varias mutaciones sin registrar los estados intermedios.
+
+14. PREGUNTAS PARA PENSAR
+
+- ¿Qué evidencia demostraría que `slice()` creó otro array?
+- ¿Por qué conservar el estado anterior puede facilitar la depuración?
+- ¿Qué devuelve `splice()` cuando solo inserta?
+- ¿Qué diferencia hay entre un índice final y una cantidad?
+- ¿Cómo cambia `length` al eliminar tres e insertar uno?
+- ¿Qué elementos cambian de índice al insertar en la mitad?
+- ¿Cuándo sería intencional modificar el array original?
+- ¿Por qué una referencia nueva puede comunicar un cambio?
+- ¿Qué riesgo conserva una copia superficial?
+
+15. RESUMEN
+
+`slice(inicio, fin)` crea y devuelve un array nuevo. Copia desde inicio incluido
+hasta fin excluido y no modifica el original. Sin argumentos permite copiar el array
+completo. Sus copias son superficiales.
+
+`splice(inicio, cantidad, ...elementos)` modifica el array original. Puede eliminar,
+insertar o reemplazar. Devuelve siempre un array con los elementos eliminados; si no
+elimina ninguno, devuelve `[]`. Los elementos posteriores pueden cambiar de índice.
+
+Copiar y modificar son intenciones distintas. Antes de programar decide si alguien
+necesita conservar el estado original. En React, crear estados nuevos hace los
+cambios más explícitos y fáciles de detectar. Para verificar cualquier operación,
+anota siempre: estado anterior, argumentos, valor devuelto y estado posterior.

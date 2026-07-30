@@ -1,0 +1,256 @@
+BOOTCAMP DE JAVASCRIPT — DÍA 1
+ARRAYS, length, push() Y pop()
+
+1. ¿QUÉ PROBLEMA RESUELVE UN ARRAY?
+
+Una variable guarda un valor. Pero muchas situaciones necesitan conservar varios valores relacionados: nombres de estudiantes, productos de una compra o tareas pendientes.
+
+Sin arrays podríamos crear una variable por dato:
+
+const fruta1 = "manzana";
+const fruta2 = "pera";
+const fruta3 = "uva";
+
+Esto se vuelve difícil de organizar cuando la colección crece. Un array reúne los valores en una sola estructura ordenada:
+
+const frutas = ["manzana", "pera", "uva"];
+
+Un array es una colección ordenada. Cada elemento ocupa una posición llamada índice. JavaScript empieza a contar índices desde 0.
+
+Índice:     0          1       2
+          +----------+-------+-------+
+frutas -> | manzana  | pera  | uva   |
+          +----------+-------+-------+
+
+Analogía: imagina una fila de casilleros numerados desde 0. El número del casillero es el índice; el objeto guardado es el elemento.
+
+Preguntas:
+- Si un array contiene cuatro elementos, ¿cuál será el índice del último?
+   R= 3
+- ¿Índice y cantidad significan lo mismo?
+   R= No
+- ¿Qué ventaja aporta agrupar datos relacionados?
+   R= Orden 
+
+2. ¿CÓMO FUNCIONA INTERNAMENTE?
+
+Una variable de array permite localizar una colección. Las posiciones mantienen un orden. Cuando consultamos array[1], pedimos el elemento colocado en la posición 1, no “el elemento número uno” según la forma cotidiana de contar.
+
+const colores = ["rojo", "verde", "azul"];
+console.log(colores[0]); // "rojo"
+console.log(colores[2]); // "azul"
+
+Los corchetes [] cumplen dos papeles en estos ejemplos:
+- Crear un array: const datos = [];
+- Consultar una posición: datos[0]
+
+Un array puede estar vacío:
+
+const pendientes = [];
+
+También puede cambiar después de crearse. Aunque se declare con const, se puede modificar su contenido. const impide asignar otro array a esa variable; no congela la colección.
+
+const caja = ["libro"];
+caja.push("lápiz"); // permitido
+
+Diagrama del cambio:
+
+Antes:  caja -> ["libro"]
+                     |
+push("lápiz")        v
+Después:caja -> ["libro", "lápiz"]
+
+Preguntas:
+- ¿Qué permanece constante cuando usamos const con un array?
+  R= el array original
+- ¿Modificar el contenido equivale a reemplazar la colección completa?
+   R=No, simplemente agregar nuevos contenidos
+- ¿Qué devolvería una consulta a una posición que no existe? Compruébalo después de predecirlo.
+  R= undefined
+
+3. length: SABER CUÁNTOS ELEMENTOS HAY
+
+length es una propiedad, no un método. Por eso se escribe sin paréntesis.
+
+const animales = ["gato", "perro", "pez"];
+console.log(animales.length); // 3
+
+Qué devuelve: un número con la longitud actual del array.
+Qué modifica: nada; solamente lee información.
+Qué NO modifica: no agrega, elimina ni reordena elementos.
+
+          índices válidos
+          0     1      2
+        +-----+------+-----+
+        | gato| perro| pez |
+        +-----+------+-----+
+length = 3
+
+Como los índices empiezan en 0, el índice del último elemento suele ser length - 1 cuando el array no está vacío.
+
+const letras = ["a", "b", "c"];
+console.log(letras[letras.length - 1]); // "c"
+
+En un array vacío, length vale 0. Antes de razonar sobre el último índice, pregunta siempre si existe algún elemento.
+
+Buenas prácticas:
+- Usa nombres plurales para colecciones: productos, tareas, edades.
+- Recuerda: length responde “¿cuántos?”, no “¿cuál es el último índice?”.
+- No escribas length() porque no es una función.
+
+Preguntas:
+- Si length vale 5, ¿qué índice ocupa el último elemento?
+  R= 4
+- ¿Qué valor tiene length en []?
+  R= 0
+- ¿Consultar length cambia el array?
+  R= No
+- ¿Por qué length - 1 necesita especial cuidado con un array vacío?
+  R= porque un array vacio vale 0 y daria error entonces siempre se consulta que array > 0
+
+4. push(): AGREGAR AL FINAL
+
+push() agrega uno o más elementos al final del mismo array.
+
+const fila = ["Ana", "Luis"];
+const nuevaLongitud = fila.push("Marta");
+
+Después:
+fila contiene ["Ana", "Luis", "Marta"]
+nuevaLongitud contiene 3
+
+Qué devuelve: la nueva longitud del array.
+Qué modifica: el array sobre el que se llama.
+Qué NO devuelve: no devuelve el elemento agregado ni un array nuevo.
+
+Antes:   ["Ana", "Luis"]       length: 2
+push("Marta")
+Después: ["Ana", "Luis", "Marta"] length: 3
+Devuelve: 3
+
+Puede agregar varios valores:
+
+const numeros = [1];
+const cantidad = numeros.push(2, 3);
+// numeros ahora contiene [1, 2, 3]
+// cantidad vale 3
+
+Error conceptual frecuente:
+
+const lista = ["a"];
+const resultado = lista.push("b");
+
+resultado es un número, no el array. La operación tiene dos efectos que debes separar mentalmente:
+1. Cambia lista.
+2. Produce un valor de retorno.
+
+Caso real: añadir una tarea nueva al final de una lista de pendientes o registrar a una persona al final de una fila.
+
+Preguntas:
+- Si un array tiene 2 elementos y agregas uno, ¿qué devuelve push()?
+  R= La longitud del array
+- ¿Dónde queda el valor nuevo?
+  R= En el array donde se pusheo
+- ¿push() crea otro array o cambia el existente?
+  R= Cambia el existente
+- Si agregas dos elementos, ¿cuánto aumenta length?
+  R= 2
+
+5. pop(): QUITAR EL ÚLTIMO
+
+pop() elimina el último elemento del mismo array.
+
+const pila = ["base", "medio", "cima"];
+const retirado = pila.pop();
+
+Después:
+pila contiene ["base", "medio"]
+retirado contiene "cima"
+
+Qué devuelve: el elemento eliminado.
+Qué modifica: reduce el array eliminando su último elemento.
+Qué NO modifica: no altera el orden de los elementos restantes.
+
+Antes:   ["base", "medio", "cima"]
+                              ^
+                            último
+pop()
+Después: ["base", "medio"]
+Devuelve: "cima"
+
+Si el array está vacío, no hay elemento que retirar. pop() devuelve undefined y el array continúa vacío.
+
+Analogía: una pila de platos. Añades un plato arriba con push() y retiras el de arriba con pop(). El último en entrar es el primero en salir.
+
+Caso real: deshacer la acción más reciente o retirar la última pantalla guardada en un historial sencillo.
+
+Preguntas:
+- ¿Qué diferencia hay entre lo que devuelven push() y pop()?
+  R= push devuelve la longitud del array y pop devuelve el ultimo elemento 
+- ¿Qué ocurre con length después de pop()?
+  R= se decrementa
+- ¿Qué devuelve pop() sobre []?
+  R= undefined
+- ¿Cómo conservarías el elemento retirado para usarlo después?
+  R= lo pondria en una variable tipo ultimo = array.pop();
+
+6. PREDECIR ESTADO Y RETORNO
+
+Antes de ejecutar código, construye una tabla mental o escrita:
+
+const bolsa = ["pan"];
+const a = bolsa.push("leche");
+const b = bolsa.pop();
+
+Línea                 Estado de bolsa          Valor producido
+inicio                ["pan"]                  —
+push("leche")         ["pan", "leche"]        nueva longitud
+pop()                 ["pan"]                  elemento retirado
+
+No memorices solamente la sintaxis. En cada operación pregunta:
+- ¿Qué colección recibe la operación?
+- ¿Cómo queda después?
+- ¿Qué valor devuelve?
+- ¿Dónde se guarda ese valor, si se guarda?
+
+7. ERRORES COMUNES Y BUENAS PRÁCTICAS
+
+Errores:
+- Confundir el índice 0 con ausencia de valor.
+- Intentar llamar array.length().
+- Creer que push() devuelve el array.
+- Creer que pop() recibe el elemento que debe eliminarse.
+- Usar pop(valor), aunque pop() siempre actúa sobre el último.
+- Ignorar que pop() en un array vacío devuelve undefined.
+- Confundir ver el resultado en consola con cambiar el array.
+
+Buenas prácticas:
+- Predice antes de ejecutar.
+- Inspecciona por separado el array y el valor retornado.
+- Usa nombres que expresen intención: ultimoRetirado, nuevaCantidad.
+- Comprueba casos límite: array vacío, un solo elemento y varios elementos.
+- Realiza una operación por línea mientras estás aprendiendo.
+
+8. CASOS REALES
+
+- Carrito: push() añade el producto más reciente; length muestra cuántos productos hay; pop() retira el último agregado.
+- Historial sencillo: push() registra una acción y pop() recupera la más reciente.
+- Fila de tareas: push() registra nuevas tareas al final.
+- Pila de pantallas: pop() permite volver desde la pantalla más reciente.
+
+Preguntas finales de reflexión:
+- ¿Cuándo sería importante saber el valor eliminado y no solo eliminarlo?
+  R= cuando este sea necesitado para despues
+- ¿Qué información se pierde si llamas pop() sin guardar su retorno?
+  R= el ultimo valor
+- ¿Por qué una operación que modifica un array también puede devolver un valor?
+  R= porque este se guarda en una variable
+- ¿Cómo explicarías la diferencia entre length y el último índice?
+  R= length es la cantidad total de objetos dentro de un array y el indice el el lugar que ocupa en el array
+- ¿Qué caso probarías primero para descubrir errores?
+  R= si el array esta vacio
+- ¿Puedes narrar una secuencia de dos push() y dos pop() sin ejecutar código?
+  
+RESUMEN
+
+Un array agrupa valores ordenados y usa índices desde 0. length indica cuántos elementos contiene y no lo modifica. push() agrega al final, modifica el array y devuelve su nueva longitud. pop() elimina el último elemento, modifica el array y devuelve el valor eliminado; si está vacío, devuelve undefined. Para razonar bien, separa siempre el estado final del array del valor devuelto por cada operación.

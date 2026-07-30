@@ -1,0 +1,356 @@
+BOOTCAMP DE JAVASCRIPT — DÍA 2
+shift(), unshift() Y LOS DOS EXTREMOS DE UN ARRAY
+
+1. EL INICIO Y EL FINAL DE UN ARRAY
+
+Un array es una colección ordenada. El primer elemento ocupa el índice 0 y el último, si existe, ocupa el índice length - 1.
+
+                 inicio                         final
+                    |                             |
+                    v                             v
+Índice:             0          1          2       3
+                +----------+----------+-------+--------+
+fila ---------> | "Ana"    | "Luis"   | "Sol" | "Leo" |
+                +----------+----------+-------+--------+
+
+Durante el Día 1 trabajaste con el final mediante push() y pop(). Hoy trabajarás con el inicio mediante unshift() y shift().
+
+Preguntas:
+- ¿Qué índice tiene siempre el primer elemento de un array no vacío?
+   R= 0 
+- ¿Cómo localizas conceptualmente el final sin memorizar un número concreto?
+   R= length -1 
+- Si agregas algo al inicio, ¿qué ocurre con el elemento que antes estaba en el índice 0?
+   R= se recorre 
+
+2. shift(): ELIMINAR DEL INICIO
+
+shift() elimina el primer elemento del mismo array.
+
+const turnos = ["Ana", "Luis", "Marta"];
+const atendido = turnos.shift();
+
+Después de la operación:
+- turnos contiene ["Luis", "Marta"].
+- atendido contiene "Ana".
+
+Qué devuelve: el elemento eliminado.
+Qué modifica: el array original, retirando su primer elemento.
+Qué no devuelve: no devuelve la nueva longitud ni el array modificado.
+
+Antes:
+
+Índice:       0        1        2
+           +-------+--------+---------+
+turnos -> | "Ana" | "Luis" | "Marta" |
+           +-------+--------+---------+
+              ^
+          shift() retira este valor
+
+Después:
+
+Índice:       0         1
+           +--------+---------+
+turnos -> | "Luis" | "Marta" |
+           +--------+---------+
+
+Devuelve: "Ana"
+
+Observa que "Luis" antes tenía índice 1 y ahora tiene índice 0. "Marta" pasó del índice 2 al 1. El orden relativo se conserva, pero los índices cambian.
+
+Si el array está vacío, shift() no encuentra un elemento que retirar:
+
+const datos = [];
+const retirado = datos.shift();
+
+datos continúa siendo [] y retirado vale undefined.
+
+Preguntas:
+- ¿Qué dos cosas deberías inspeccionar después de llamar shift()?
+   R= si el array esta vacio y que devolvio shift
+- ¿Qué devuelve shift() si el primer elemento es el número 0?
+   R= 0
+- ¿Cómo distinguirías ese caso de un array vacío?
+   R= que devuelve undefined si esta vacio
+- ¿Por qué no debes suponer que el segundo elemento conserva el índice 1?
+   R= porque el orden relativo es el que se conserva pero los indices cambian
+
+3. unshift(): AGREGAR AL INICIO
+
+unshift() agrega uno o más elementos al inicio del mismo array.
+
+const pendientes = ["revisar", "publicar"];
+const nuevaCantidad = pendientes.unshift("corregir");
+
+Después de la operación:
+- pendientes contiene ["corregir", "revisar", "publicar"].
+- nuevaCantidad contiene 3.
+
+Qué devuelve: la nueva longitud del array.
+Qué modifica: el array original, agregando valores al inicio.
+Qué no devuelve: no devuelve el elemento agregado ni un array nuevo.
+
+Antes:
+
+Índice:             0           1
+                +-----------+-----------+
+pendientes ---> | "revisar" | "publicar" |
+                +-----------+-----------+
+
+unshift("corregir")
+
+Después:
+
+Índice:             0            1           2
+                +------------+-----------+-----------+
+pendientes ---> | "corregir" | "revisar" | "publicar" |
+                +------------+-----------+-----------+
+
+Devuelve: 3
+
+unshift() también puede agregar varios elementos. Estos aparecen al inicio en el mismo orden en que se proporcionan:
+
+const numeros = [3, 4];
+const cantidad = numeros.unshift(1, 2);
+
+numeros queda como [1, 2, 3, 4] y cantidad vale 4.
+
+Preguntas:
+- Si el array tenía tres elementos y agregas dos, ¿qué devuelve unshift()?
+   R= 5
+- ¿Ese retorno es un array, un elemento o un número?
+   R= un numero
+- ¿Cuál será el índice nuevo de un elemento que antes estaba en el índice 0?
+   R= 1
+- ¿Qué orden esperas al agregar dos valores en una sola llamada?
+   R= el mismo solo que con los dos valores nuevos al inicio
+
+4. ¿QUÉ SIGNIFICA QUE UN MÉTODO SEA MUTABLE?
+
+Un método mutable cambia la estructura sobre la que se ejecuta. Los cuatro métodos estudiados —push(), pop(), shift() y unshift()— modifican el array original.
+
+const letras = ["b", "c"];
+const resultado = letras.unshift("a");
+
+Hay dos observaciones distintas:
+
+1. Estado: letras ahora contiene ["a", "b", "c"].
+2. Retorno: resultado contiene 3.
+
+La variable declarada con const continúa apuntando al mismo array; no se ha asignado otro array. Lo que cambió fue su contenido.
+
+Antes:    letras ──> ["b", "c"]
+                         |
+                    unshift("a")
+                         |
+Después:  letras ──> ["a", "b", "c"]
+
+Mutar no significa necesariamente borrar. Agregar, eliminar o reordenar el contenido también puede ser una mutación.
+
+Preguntas:
+- ¿Cómo demostrarías que un método modificó el array original?
+   R= retornando el array 
+- ¿Por qué guardar el retorno no evita la mutación?
+   R= pq estos metodos trabajan modificando el array original
+- ¿Qué diferencia hay entre cambiar el contenido y reasignar una variable?
+   R= 
+- ¿Los cuatro métodos vistos son mutables? Justifica cada caso.
+   R= si 
+
+5. ¿QUÉ OCURRE INTERNAMENTE AL ELIMINAR EL PRIMER ELEMENTO?
+
+Para entender el costo, imagina posiciones numeradas. Cuando shift() retira el índice 0, JavaScript debe mantener una colección continua cuyos elementos restantes comiencen nuevamente en el índice 0.
+
+Antes de shift():
+
+índice       0        1        2        3
+          +--------+--------+--------+--------+
+          |   A    |   B    |   C    |   D    |
+          +--------+--------+--------+--------+
+
+Se elimina A:
+
+índice       0        1        2        3
+          +--------+--------+--------+--------+
+          | vacío  |   B    |   C    |   D    |
+          +--------+--------+--------+--------+
+
+Los elementos se desplazan conceptualmente:
+
+B: índice 1 ─────> índice 0
+C: índice 2 ─────> índice 1
+D: índice 3 ─────> índice 2
+
+Resultado:
+
+índice       0        1        2
+          +--------+--------+--------+
+          |   B    |   C    |   D    |
+          +--------+--------+--------+
+
+Los motores de JavaScript aplican optimizaciones internas y no todos representan los arrays exactamente como estas casillas. Sin embargo, este modelo explica el costo observable: cambiar el inicio puede requerir actualizar muchas posiciones.
+
+unshift() presenta el problema inverso. Para liberar el índice 0, los elementos existentes deben desplazarse conceptualmente hacia índices mayores:
+
+Antes:       [A][B][C]
+Movimiento:   A ─> 1   B ─> 2   C ─> 3
+Después:     [X][A][B][C]
+
+Si hay n elementos, shift() o unshift() normalmente realizan trabajo proporcional a n. Esto se expresa aproximadamente como O(n).
+
+6. ¿POR QUÉ push() Y pop() SUELEN SER MÁS RÁPIDOS?
+
+Trabajar al final normalmente no cambia los índices de los elementos existentes.
+
+push("D"):
+
+Antes:    [A][B][C]
+Después:  [A][B][C][D]
+           índices anteriores sin cambios
+
+pop():
+
+Antes:    [A][B][C]
+Después:  [A][B]
+           A y B conservan sus índices
+
+Por eso push() suele tener costo O(1) amortizado y pop() costo O(1). “Amortizado” significa que push() puede necesitar ocasionalmente ampliar el almacenamiento interno, pero su costo promedio sigue siendo constante.
+
+En cambio, shift() y unshift() suelen ser O(n), porque el trabajo crece con la cantidad de elementos que deben cambiar de posición.
+
+Esto no significa que shift() y unshift() sean incorrectos. Si representan claramente una fila real y la colección es pequeña, su claridad puede ser más importante que una diferencia mínima de rendimiento. Primero elige el método correcto; luego evalúa el rendimiento cuando exista una necesidad real.
+
+Preguntas:
+- ¿Cuántos índices existentes cambian al hacer push()?
+- ¿Cuántos podrían cambiar al hacer unshift() en un array grande?
+- ¿Por qué O(n) no significa “siempre lento”?
+- ¿En qué situación preferirías claridad antes que una microoptimización?
+
+7. COMPARACIÓN COMPLETA
+
+push(valor)
+- Extremo: final.
+- Acción: agrega uno o más elementos.
+- Retorno: nueva longitud.
+- Mutación: sí.
+- Complejidad habitual: O(1) amortizada.
+
+pop()
+- Extremo: final.
+- Acción: elimina un elemento.
+- Retorno: elemento eliminado o undefined.
+- Mutación: sí.
+- Complejidad habitual: O(1).
+
+shift()
+- Extremo: inicio.
+- Acción: elimina un elemento.
+- Retorno: elemento eliminado o undefined.
+- Mutación: sí.
+- Complejidad habitual: O(n).
+
+unshift(valor)
+- Extremo: inicio.
+- Acción: agrega uno o más elementos.
+- Retorno: nueva longitud.
+- Mutación: sí.
+- Complejidad habitual: O(n).
+
+Mapa mental:
+
+                         ARRAY
+               inicio             final
+                 |                  |
+          +------+-----+      +-----+----+
+          |            |      |          |
+       unshift()     shift() push()     pop()
+         agrega      elimina  agrega    elimina
+         devuelve    devuelve devuelve  devuelve
+         longitud    elemento longitud  elemento
+
+Regla razonada, no memorizada:
+- Los métodos que agregan, push() y unshift(), devuelven la nueva longitud.
+- Los métodos que eliminan, pop() y shift(), devuelven el elemento retirado.
+- El nombre del método determina el extremo sobre el que actúa.
+
+8. EJEMPLOS PARA PREDECIR
+
+Ejemplo A:
+
+const cola = ["B", "C"];
+const x = cola.unshift("A");
+const y = cola.shift();
+
+Antes de ejecutar, responde:
+- ¿Cómo queda cola después de cada línea?
+- ¿Qué tipo de dato contiene x?
+- ¿Qué valor contiene y?
+- ¿La longitud final coincide con la inicial? ¿Por qué?
+
+Ejemplo B:
+
+const letras = ["M"];
+const a = letras.push("N");
+const b = letras.unshift("L");
+const c = letras.pop();
+const d = letras.shift();
+
+Construye una tabla:
+
+Operación          Estado antes       Retorno       Estado después
+push("N")          ____________       _______       ______________
+unshift("L")       ____________       _______       ______________
+pop()              ____________       _______       ______________
+shift()            ____________       _______       ______________
+
+Ejemplo C: array vacío
+
+const vacio = [];
+const primero = vacio.shift();
+const segundo = vacio.pop();
+
+Preguntas:
+- ¿Son iguales primero y segundo?
+- ¿Cambió vacio?
+- ¿Qué diferencia habría si el array contuviera explícitamente undefined?
+
+9. ERRORES COMUNES
+
+- Creer que shift() devuelve la nueva longitud. Devuelve el elemento retirado.
+- Creer que unshift() devuelve el array. Devuelve la nueva longitud.
+- Confundir shift() con pop(): ambos eliminan, pero operan en extremos distintos.
+- Confundir unshift() con push(): ambos agregan, pero operan en extremos distintos.
+- Guardar el retorno y luego tratarlo como si fuera el array.
+- Ignorar que todos los índices restantes cambian después de shift().
+- Pensar que const vuelve inmutable el contenido del array.
+- Ejecutar varias operaciones sin registrar los estados intermedios.
+- Usar un método no estudiado para evitar razonar sobre los extremos.
+
+10. PREGUNTAS DE REFLEXIÓN FINAL
+
+- ¿Qué tienen en común shift() y pop()?
+- ¿Qué diferencia esencial existe entre ellos?
+- ¿Qué tienen en común unshift() y push()?
+- ¿Por qué los métodos que agregan devuelven una cantidad?
+- ¿Por qué puede ser útil guardar el elemento que se elimina?
+- ¿Cómo explicarías mutación sin usar la palabra “cambio”?
+- ¿Qué índices se modifican al retirar el primer elemento?
+- ¿Por qué una fila de atención suele representarse con push() y shift()?
+- ¿Qué combinación representaría una pila de platos?
+- ¿Cuándo importa la diferencia entre O(1) y O(n)?
+- ¿Qué caso límite probarías con los cuatro métodos?
+- ¿Puedes narrar una secuencia de cuatro operaciones sin ejecutarla?
+
+RESUMEN DE UNA PÁGINA
+
+Un array tiene dos extremos: inicio y final. El inicio corresponde al índice 0; el final corresponde al último elemento existente. push() y pop() trabajan con el final. unshift() y shift() trabajan con el inicio.
+
+shift() elimina el primer elemento, modifica el array original y devuelve el valor eliminado. Después, los elementos restantes ocupan índices menores. Si se ejecuta sobre un array vacío, devuelve undefined y el array continúa vacío.
+
+unshift() agrega uno o más elementos al inicio, modifica el array original y devuelve la nueva longitud. Los elementos que ya existían pasan a índices mayores. Cuando recibe varios valores, conserva entre ellos el orden indicado en la llamada.
+
+Los cuatro métodos son mutables: cambian el contenido del mismo array. El cambio del array y el retorno del método son resultados diferentes que deben analizarse por separado. push() y unshift() agregan y devuelven la nueva longitud. pop() y shift() eliminan y devuelven el elemento retirado, o undefined cuando no existe.
+
+Trabajar al final suele ser eficiente porque los índices existentes no necesitan cambiar. pop() suele ser O(1) y push() O(1) amortizado. Trabajar al inicio suele ser O(n): shift() y unshift() pueden requerir desplazar conceptualmente todos los elementos. O(n) significa que el trabajo puede crecer con el tamaño del array; no prohíbe usar esos métodos cuando expresan correctamente el problema.
+
+Para resolver ejercicios, sigue siempre cuatro preguntas: ¿sobre qué array se ejecuta?, ¿en qué extremo actúa?, ¿cómo queda el array? y ¿qué devuelve? Predice primero, ejecuta después y comprueba tanto el estado como el retorno.
